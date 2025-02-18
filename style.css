@@ -1,0 +1,58 @@
+/* --- Importar fuentes --- */
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap');
+
+/* --- Estilos generales --- */
+body{
+    margin: 0;
+    background-image: url("images/bg.jpg");
+    background-size: cover;
+    font-family: "Press Start 2P", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* --- Estilos para la página de inicio (index.html) --- */
+.homecontainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10%;
+}
+
+.hometitle{
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 90px;
+}
+
+.homebuttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.button{
+    background: linear-gradient(to right, #F2C94C, #F2994A);
+    margin: 10px;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: all 0.25s;
+    background-size: 200% auto;
+    color: white;            
+    border-radius: 10px;
+    display: block;
+    text-decoration: none;
+}
+
+.button:hover{
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 0 12.5px #eee;
+    transform: scale(1.05);
+}
+
+/* --- Estilos para la página del juego (game.html) --- */
