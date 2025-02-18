@@ -9,6 +9,7 @@ body{
     font-family: "Press Start 2P", serif;
     font-weight: 400;
     font-style: normal;
+    height: 100vh;
 }
 
 /* --- Estilos para la página de inicio (index.html) --- */
@@ -56,3 +57,27 @@ body{
 }
 
 /* --- Estilos para la página del juego (game.html) --- */
+.maxcontainer{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.pointscontainer,
+.chatcontainer{
+    width: 22.5%;
+    height: 95vh;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 5px;
+}
+
+.gamecontainer{
+    width: 50%;
+    height: 95vh;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 5px;
+}
