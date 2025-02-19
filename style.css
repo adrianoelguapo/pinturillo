@@ -72,6 +72,13 @@ body{
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+.sectiontitle{
+    margin-top: 10%;
 }
 
 .gamecontainer{
@@ -80,4 +87,28 @@ body{
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+
+.gameheader{
+    margin-top: 2.5%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.gameheader p{
+    width: 30%;
+    text-align: center;
+}
+
+canvas{
+    margin-top: 2.75%;
+    background-color: white;
+    border-radius: 5px;
+    width: 95%;
+    height: 85%;
 }
