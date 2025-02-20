@@ -94,13 +94,11 @@ $(document).ready(function() {
     $mainCanvas.off("mousemove touchmove", mouseMoving);
   };
 
-  // Función para vincular los eventos de dibujo al canvas
   function bindCanvasEvents() {
     $mainCanvas.on("mousedown touchstart", mouseDown);
     $mainCanvas.on("mouseup touchend", mouseUp);
   }
 
-  // Vinculamos los eventos inicialmente
   bindCanvasEvents();
 
   $("#cleanboard").on("click", function() {
@@ -131,10 +129,9 @@ $(document).ready(function() {
     $("#word").text(randomWord.toUpperCase());
   }
 
-  // Establecemos la palabra aleatoria al inicio
+  // Asignamos la palabra aleatoria al inicio
   setRandomWord();
 
-  // Función para iniciar el temporizador
   function startTimer() {
     timerInterval = setInterval(function() {
       if (timeLeft > 0) {
@@ -144,24 +141,20 @@ $(document).ready(function() {
         clearInterval(timerInterval);
         $("#timer").text("Time's up!");
         gameActive = false;
-        // Desvinculamos todos los eventos para evitar el dibujo
         $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
       }
     }, 1000);
   }
 
-  // Iniciamos el temporizador
   startTimer();
 
-  // Si se pulsa el botón "Reset Game", se reinicia el juego (incluye una nueva palabra)
   $("#resetgame").on("click", function() {
-    // Reiniciamos el canvas, el contador y se activa el juego
     context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
     timeLeft = 30;
     $("#timer").text("Time: " + timeLeft);
     gameActive = true;
+    // Aquí se llama para asignar una nueva palabra aleatoria
     setRandomWord();
-    // Reiniciamos el temporizador y volvemos a vincular los eventos al canvas
     clearInterval(timerInterval);
     bindCanvasEvents();
     startTimer();
