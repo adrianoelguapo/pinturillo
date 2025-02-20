@@ -1,4 +1,37 @@
 $(document).ready(function() {
+  const words = {
+    "fruits": [
+      "apple", "banana", "pear", "cherry", "strawberry",
+      "mango", "watermelon", "melon", "pineapple", "blueberry",
+      "orange", "lemon", "coconut", "kiwi", "grape",
+      "papaya", "passionfruit", "pomegranate", "apricot", "guava"
+    ],
+    "animals": [
+      "dog", "cat", "lion", "tiger", "elephant",
+      "giraffe", "zebra", "monkey", "bear", "wolf",
+      "fox", "rabbit", "deer", "horse", "cow",
+      "sheep", "goat", "kangaroo", "panda", "leopard"
+    ],
+    "instruments": [
+      "guitar", "piano", "violin", "drums", "flute",
+      "saxophone", "trumpet", "cello", "harp", "clarinet",
+      "trombone", "bass", "oboe", "accordion", "banjo",
+      "mandolin", "ukelele", "organ", "synthesizer", "xylophone"
+    ],
+    "vegetables": [
+      "carrot", "potato", "tomato", "cucumber", "lettuce",
+      "spinach", "broccoli", "cauliflower", "pepper", "onion",
+      "garlic", "zucchini", "eggplant", "cabbage", "radish",
+      "beetroot", "pea", "corn", "celery", "asparagus"
+    ],
+    "sports": [
+      "soccer", "basketball", "baseball", "tennis", "golf",
+      "swimming", "running", "cycling", "volleyball", "rugby",
+      "hockey", "boxing", "badminton", "cricket", "skiing",
+      "surfing", "skateboarding", "table tennis", "martial arts", "fencing"
+    ]
+  };  
+
   const $mainCanvas = $("#main-canvas");
   const mainCanvas = $mainCanvas[0];
   const context = mainCanvas.getContext("2d");
