@@ -116,6 +116,12 @@ body{
     border: none;
     background: none;
     cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 5px;
+}
+
+.gameheader button:hover{
+    box-shadow: 0 0 12.5px #eee;
 }
 
 .gameoptions{
@@ -270,6 +276,15 @@ body{
     background: none;
     cursor: pointer;
     margin-bottom: 5%;
+    margin-top: 2.5%;
+    transition: all 0.3s;
+    border-radius: 5px;
+    height: 60%;
+    width: 25%;
+}
+
+#cleanboard:hover{
+    box-shadow: 0 0 12.5px #eee;
 }
 
 canvas{
