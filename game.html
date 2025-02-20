@@ -8,6 +8,7 @@
         <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
         <title>Pinturillo - Adriano</title>
         <link rel = "stylesheet" href = "style.css">
+        <script src = "https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     </head>
 
@@ -17,7 +18,7 @@
 
             <div class = "pointscontainer">
 
-                <p class = "sectiontitle">Puntos</p>
+                <p class = "sectiontitle">Points:</p>
 
             </div>
 
@@ -25,15 +26,88 @@
 
                 <div class = "gameheader">
 
-                    <p>Tiempo: 30</p>
+                    <p>Time: 30</p>
                     <p>PALABRA</p>
-                    <p>Reset</p>
+                    <p>Reset Game</p>
+
+                </div>
+
+                <div class = "gameoptions">
+
+                    <div class = "colorscontainer">
+
+                        <p>Colors:</p>
+
+                        <div class = "gamecolors">
+
+                            <div class = "color" id = "red"></div>
+                            <div class = "color" id = "orange"></div>
+                            <div class = "color" id = "yellow"></div>
+                            <div class = "color" id = "green"></div>
+                            <div class = "color" id = "lightblue"></div>
+                            <div class = "color" id = "blue"></div>
+                            <div class = "color" id = "pink"></div>
+                            <div class = "color" id = "grey"></div>
+                            <div class = "color" id = "darkred"></div>
+                            <div class = "color" id = "brown"></div>
+                            <div class = "color" id = "darkyellow"></div>
+                            <div class = "color" id = "darkgreen"></div>
+                            <div class = "color" id = "darkblue"></div>
+                            <div class = "color" id = "navyblue"></div>
+                            <div class = "color" id = "violet"></div>
+                            <div class = "color" id = "black"></div>
+                            
+                        </div>
+
+                    </div>
+
+                    <div class = "linescontainer">
+
+                        <p>Thickness:</p>
+
+                        <div class = "gamelines">
+
+                            <div id = "thinline" class = "line">
+
+                                <div class = "thinlinecircle">
+
+                                    <!-- Círculo pequeño -->
+
+                                </div>
+
+                            </div>
+
+                            <div id = "mediumline" class = "line">
+
+                                <div class = "mediumlinecircle">
+
+                                    <!-- Círculo mediano -->
+
+                                </div>
+
+                            </div>
+
+                            <div id = "thickline" class = "line">
+
+                                <div class = "thicklinecircle">
+
+                                    <!-- Círculo grande -->
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <button id = "cleanboard">Clean board</button>
 
                 </div>
 
                 <canvas id = "main-canvas">
 
-                    <!---->
+                    <!-- Tablero donde se dibuja -->
 
                 </canvas>
 
@@ -41,7 +115,7 @@
 
             <div class = "chatcontainer">
 
-                <p class = "sectiontitle">Chat</p>
+                <p class = "sectiontitle">Chat:</p>
 
             </div>
 

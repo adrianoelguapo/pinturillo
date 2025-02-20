@@ -1,70 +1,85 @@
-// game.js - Código corregido y completo
+$(document).ready(function() {
+  const $mainCanvas = $("#main-canvas");
+  const mainCanvas = $mainCanvas[0];
+  const context = mainCanvas.getContext("2d");
 
-const mainCanvas = document.getElementById("main-canvas");
-const context = mainCanvas.getContext("2d");
+  let initialX;
+  let initialY;
+  let currentLineWidth = 2;
+  let currentStrokeStyle = "#000";
 
-let initialX;
-let initialY;
+  const getPosicionCanvas = function(evt) {
+    const rect = mainCanvas.getBoundingClientRect();
+    let x, y;
 
-const getPosicionCanvas = (evt) => {
-  const rect = mainCanvas.getBoundingClientRect();
-  let x, y;
-  
-  if (evt.changedTouches) {
-    // Para dispositivos táctiles
-    x = evt.changedTouches[0].clientX - rect.left;
-    y = evt.changedTouches[0].clientY - rect.top;
-  } else {
-    // Para eventos de ratón
-    x = evt.clientX - rect.left;
-    y = evt.clientY - rect.top;
-  }
-  
-  // Ajustar las coordenadas en caso de que el canvas esté escalado vía CSS
-  x *= mainCanvas.width / rect.width;
-  y *= mainCanvas.height / rect.height;
-  
-  return { x, y };
-};
+    if (evt.originalEvent.changedTouches) {
+      x = evt.originalEvent.changedTouches[0].clientX - rect.left;
+      y = evt.originalEvent.changedTouches[0].clientY - rect.top;
+    } else {
+      x = evt.clientX - rect.left;
+      y = evt.clientY - rect.top;
+    }
 
-const dibujar = (cursorX, cursorY) => {
-  context.beginPath();
-  context.moveTo(initialX, initialY);
-  context.lineWidth = 5;
-  context.strokeStyle = "#000";
-  context.lineCap = "round";
-  context.lineJoin = "round";
-  context.lineTo(cursorX, cursorY);
-  context.stroke();
-  
-  // Actualizamos la posición inicial para el siguiente trazo
-  initialX = cursorX;
-  initialY = cursorY;
-};
+    x *= mainCanvas.width / rect.width;
+    y *= mainCanvas.height / rect.height;
 
-const mouseDown = (evt) => {
-  evt.preventDefault();
-  const pos = getPosicionCanvas(evt);
-  initialX = pos.x;
-  initialY = pos.y;
-  dibujar(initialX, initialY);
-  mainCanvas.addEventListener("mousemove", mouseMoving);
-  mainCanvas.addEventListener("touchmove", mouseMoving);
-};
+    return { x, y };
+  };
 
-const mouseMoving = (evt) => {
-  evt.preventDefault();
-  const pos = getPosicionCanvas(evt);
-  dibujar(pos.x, pos.y);
-};
+  const dibujar = function(cursorX, cursorY) {
+    context.beginPath();
+    context.moveTo(initialX, initialY);
+    context.lineWidth = currentLineWidth;
+    context.strokeStyle = currentStrokeStyle;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.lineTo(cursorX, cursorY);
+    context.stroke();
 
-const mouseUp = (evt) => {
-  evt.preventDefault();
-  mainCanvas.removeEventListener("mousemove", mouseMoving);
-  mainCanvas.removeEventListener("touchmove", mouseMoving);
-};
+    initialX = cursorX;
+    initialY = cursorY;
+  };
 
-mainCanvas.addEventListener("mousedown", mouseDown);
-mainCanvas.addEventListener("mouseup", mouseUp);
-mainCanvas.addEventListener("touchstart", mouseDown);
-mainCanvas.addEventListener("touchend", mouseUp);
+  const mouseDown = function(evt) {
+    evt.preventDefault();
+    const pos = getPosicionCanvas(evt);
+    initialX = pos.x;
+    initialY = pos.y;
+    dibujar(initialX, initialY);
+    $mainCanvas.on("mousemove touchmove", mouseMoving);
+  };
+
+  const mouseMoving = function(evt) {
+    evt.preventDefault();
+    const pos = getPosicionCanvas(evt);
+    dibujar(pos.x, pos.y);
+  };
+
+  const mouseUp = function(evt) {
+    evt.preventDefault();
+    $mainCanvas.off("mousemove touchmove", mouseMoving);
+  };
+
+  $mainCanvas.on("mousedown touchstart", mouseDown);
+  $mainCanvas.on("mouseup touchend", mouseUp);
+
+  $("#cleanboard").on("click", function() {
+    context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+  });
+
+  $("#thinline").on("click", function() {
+    currentLineWidth = 2;
+  });
+  $("#mediumline").on("click", function() {
+    currentLineWidth = 4;
+  });
+  $("#thickline").on("click", function() {
+    currentLineWidth = 6;
+  });
+
+  $(".color").on("click", function() {
+    const bgColor = $(this).css("background-color");
+    currentStrokeStyle = bgColor;
+  });
+
+});
