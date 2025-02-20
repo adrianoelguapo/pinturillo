@@ -47,7 +47,6 @@ $(document).ready(function() {
   const getPosicionCanvas = function(evt) {
     const rect = mainCanvas.getBoundingClientRect();
     let x, y;
-
     if (evt.originalEvent.changedTouches) {
       x = evt.originalEvent.changedTouches[0].clientX - rect.left;
       y = evt.originalEvent.changedTouches[0].clientY - rect.top;
@@ -55,10 +54,8 @@ $(document).ready(function() {
       x = evt.clientX - rect.left;
       y = evt.clientY - rect.top;
     }
-
     x *= mainCanvas.width / rect.width;
     y *= mainCanvas.height / rect.height;
-
     return { x, y };
   };
 
@@ -71,7 +68,6 @@ $(document).ready(function() {
     context.lineJoin = "round";
     context.lineTo(cursorX, cursorY);
     context.stroke();
-
     initialX = cursorX;
     initialY = cursorY;
   };
@@ -98,8 +94,14 @@ $(document).ready(function() {
     $mainCanvas.off("mousemove touchmove", mouseMoving);
   };
 
-  $mainCanvas.on("mousedown touchstart", mouseDown);
-  $mainCanvas.on("mouseup touchend", mouseUp);
+  // Función para vincular los eventos de dibujo al canvas
+  function bindCanvasEvents() {
+    $mainCanvas.on("mousedown touchstart", mouseDown);
+    $mainCanvas.on("mouseup touchend", mouseUp);
+  }
+
+  // Vinculamos los eventos inicialmente
+  bindCanvasEvents();
 
   $("#cleanboard").on("click", function() {
     context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
@@ -132,19 +134,6 @@ $(document).ready(function() {
   // Establecemos la palabra aleatoria al inicio
   setRandomWord();
 
-  // Si se pulsa el botón "Reset Game", se reinicia el juego (incluye una nueva palabra)
-  $("#resetgame").on("click", function() {
-    // Reiniciamos el canvas, el contador y se activa el juego
-    context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-    timeLeft = 30;
-    $("#timer").text("Time: " + timeLeft);
-    gameActive = true;
-    setRandomWord();
-    // Reiniciamos el temporizador
-    clearInterval(timerInterval);
-    startTimer();
-  });
-
   // Función para iniciar el temporizador
   function startTimer() {
     timerInterval = setInterval(function() {
@@ -163,4 +152,18 @@ $(document).ready(function() {
 
   // Iniciamos el temporizador
   startTimer();
+
+  // Si se pulsa el botón "Reset Game", se reinicia el juego (incluye una nueva palabra)
+  $("#resetgame").on("click", function() {
+    // Reiniciamos el canvas, el contador y se activa el juego
+    context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+    timeLeft = 30;
+    $("#timer").text("Time: " + timeLeft);
+    gameActive = true;
+    setRandomWord();
+    // Reiniciamos el temporizador y volvemos a vincular los eventos al canvas
+    clearInterval(timerInterval);
+    bindCanvasEvents();
+    startTimer();
+  });
 });
