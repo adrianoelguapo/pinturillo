@@ -30,7 +30,7 @@ $(document).ready(function() {
       "hockey", "boxing", "badminton", "cricket", "skiing",
       "surfing", "skateboarding", "table tennis", "martial arts", "fencing"
     ]
-  };  
+  };
 
   const $mainCanvas = $("#main-canvas");
   const mainCanvas = $mainCanvas[0];
@@ -40,6 +40,9 @@ $(document).ready(function() {
   let initialY;
   let currentLineWidth = 2;
   let currentStrokeStyle = "#000";
+  let gameActive = true;
+  let timeLeft = 30;
+  let timerInterval;
 
   const getPosicionCanvas = function(evt) {
     const rect = mainCanvas.getBoundingClientRect();
@@ -74,6 +77,7 @@ $(document).ready(function() {
   };
 
   const mouseDown = function(evt) {
+    if (!gameActive) return;
     evt.preventDefault();
     const pos = getPosicionCanvas(evt);
     initialX = pos.x;
@@ -83,6 +87,7 @@ $(document).ready(function() {
   };
 
   const mouseMoving = function(evt) {
+    if (!gameActive) return;
     evt.preventDefault();
     const pos = getPosicionCanvas(evt);
     dibujar(pos.x, pos.y);
@@ -115,4 +120,47 @@ $(document).ready(function() {
     currentStrokeStyle = bgColor;
   });
 
+  // Función para asignar una palabra aleatoria a #word
+  function setRandomWord() {
+    const categories = Object.keys(words);
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    const randomIndex = Math.floor(Math.random() * words[randomCategory].length);
+    const randomWord = words[randomCategory][randomIndex];
+    $("#word").text(randomWord.toUpperCase());
+  }
+
+  // Establecemos la palabra aleatoria al inicio
+  setRandomWord();
+
+  // Si se pulsa el botón "Reset Game", se reinicia el juego (incluye una nueva palabra)
+  $("#resetgame").on("click", function() {
+    // Reiniciamos el canvas, el contador y se activa el juego
+    context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+    timeLeft = 30;
+    $("#timer").text("Time: " + timeLeft);
+    gameActive = true;
+    setRandomWord();
+    // Reiniciamos el temporizador
+    clearInterval(timerInterval);
+    startTimer();
+  });
+
+  // Función para iniciar el temporizador
+  function startTimer() {
+    timerInterval = setInterval(function() {
+      if (timeLeft > 0) {
+        timeLeft--;
+        $("#timer").text("Time: " + timeLeft);
+      } else {
+        clearInterval(timerInterval);
+        $("#timer").text("Time's up!");
+        gameActive = false;
+        // Desvinculamos todos los eventos para evitar el dibujo
+        $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
+      }
+    }, 1000);
+  }
+
+  // Iniciamos el temporizador
+  startTimer();
 });
