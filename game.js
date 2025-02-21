@@ -32,6 +32,13 @@ $(document).ready(function() {
     ]
   };
 
+  // Variables globales para la palabra a adivinar
+  let currentCategory;
+  let currentWord;
+  // Para almacenar las respuestas ya dadas por la máquina (sin repetir)
+  let machineGuesses = [];
+  let machineInterval;
+
   const $mainCanvas = $("#main-canvas");
   const mainCanvas = $mainCanvas[0];
   const context = mainCanvas.getContext("2d");
@@ -44,6 +51,7 @@ $(document).ready(function() {
   let timeLeft = 30;
   let timerInterval;
 
+  // Función que devuelve la posición relativa en el canvas
   const getPosicionCanvas = function(evt) {
     const rect = mainCanvas.getBoundingClientRect();
     let x, y;
@@ -59,6 +67,7 @@ $(document).ready(function() {
     return { x, y };
   };
 
+  // Función para dibujar en el canvas
   const dibujar = function(cursorX, cursorY) {
     context.beginPath();
     context.moveTo(initialX, initialY);
@@ -72,6 +81,7 @@ $(document).ready(function() {
     initialY = cursorY;
   };
 
+  // Funciones para manejar el dibujo con ratón/táctil
   const mouseDown = function(evt) {
     if (!gameActive) return;
     evt.preventDefault();
@@ -94,13 +104,14 @@ $(document).ready(function() {
     $mainCanvas.off("mousemove touchmove", mouseMoving);
   };
 
+  // Función para vincular los eventos de dibujo
   function bindCanvasEvents() {
     $mainCanvas.on("mousedown touchstart", mouseDown);
     $mainCanvas.on("mouseup touchend", mouseUp);
   }
-
   bindCanvasEvents();
 
+  // Botones para limpiar el canvas y cambiar el grosor/color
   $("#cleanboard").on("click", function() {
     context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
   });
@@ -120,18 +131,54 @@ $(document).ready(function() {
     currentStrokeStyle = bgColor;
   });
 
-  // Función para asignar una palabra aleatoria a #word
+  // Función para asignar una palabra aleatoria a #word y almacenar su categoría
   function setRandomWord() {
     const categories = Object.keys(words);
     const randomCategory = categories[Math.floor(Math.random() * categories.length)];
     const randomIndex = Math.floor(Math.random() * words[randomCategory].length);
     const randomWord = words[randomCategory][randomIndex];
-    $("#word").text(randomWord.toUpperCase());
+    currentCategory = randomCategory;
+    currentWord = randomWord.toUpperCase();
+    $("#word").text(currentWord);
+    machineGuesses = []; // reiniciamos las respuestas de la máquina
   }
-
   // Asignamos la palabra aleatoria al inicio
   setRandomWord();
 
+  // Función que realiza la respuesta de la máquina cada 3 segundos
+  function machineGuess() {
+    if (!gameActive) {
+      clearInterval(machineInterval);
+      return;
+    }
+    // Filtramos las palabras de la categoría que aún no se han adivinado
+    const availableGuesses = words[currentCategory].filter(word => {
+      return !machineGuesses.includes(word.toUpperCase());
+    });
+    if (availableGuesses.length === 0) {
+      clearInterval(machineInterval);
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * availableGuesses.length);
+    let guess = availableGuesses[randomIndex].toUpperCase();
+    machineGuesses.push(guess);
+    // Mostramos la respuesta en el contenedor de respuestas
+    $(".answerscontainer").append("<p>IA: " + guess + "</p>");
+    // Si la máquina acierta, detenemos el juego, el temporizador y el dibujo
+    if (guess === currentWord) {
+      clearInterval(timerInterval);
+      $("#timer").text("IA guessed it");
+      gameActive = false;
+      clearInterval(machineInterval);
+      $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
+    }
+  }
+
+  function startMachineGuess() {
+    machineInterval = setInterval(machineGuess, 3000);
+  }
+
+  // Función para iniciar el temporizador
   function startTimer() {
     timerInterval = setInterval(function() {
       if (timeLeft > 0) {
@@ -141,22 +188,27 @@ $(document).ready(function() {
         clearInterval(timerInterval);
         $("#timer").text("Time's up!");
         gameActive = false;
+        clearInterval(machineInterval);
         $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
       }
     }, 1000);
   }
 
   startTimer();
+  startMachineGuess();
 
+  // Evento para resetear el juego: reinicia canvas, contador, respuestas y asigna nueva palabra
   $("#resetgame").on("click", function() {
     context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
     timeLeft = 30;
     $("#timer").text("Time: " + timeLeft);
     gameActive = true;
-    // Aquí se llama para asignar una nueva palabra aleatoria
+    $(".answerscontainer").empty();
     setRandomWord();
     clearInterval(timerInterval);
+    clearInterval(machineInterval);
     bindCanvasEvents();
     startTimer();
+    startMachineGuess();
   });
 });
