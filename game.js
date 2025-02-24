@@ -32,6 +32,12 @@ $(document).ready(function() {
     ]
   };
 
+  // Variables para rondas y puntuación
+  let round = 1;
+  const maxRounds = 5;
+  let playerPoints = 0;
+  let iaPoints = 0;
+
   // Variables globales para la palabra a adivinar
   let currentCategory;
   let currentWord;
@@ -51,7 +57,15 @@ $(document).ready(function() {
   let timeLeft = 30;
   let timerInterval;
 
-  // Función que devuelve la posición relativa en el canvas
+  // Actualiza la visualización de la puntuación y la ronda
+  function updateScoreboard() {
+    $("#playerpoints").html("<b>Player:</b> " + playerPoints);
+    $("#iapoints").html("<b>IA:</b> " + iaPoints);
+    $(".rounds").text("Round: " + round + "/" + maxRounds);
+  }
+  updateScoreboard();
+
+  // Devuelve la posición relativa en el canvas
   const getPosicionCanvas = function(evt) {
     const rect = mainCanvas.getBoundingClientRect();
     let x, y;
@@ -81,7 +95,7 @@ $(document).ready(function() {
     initialY = cursorY;
   };
 
-  // Funciones para manejar el dibujo con ratón/táctil
+  // Manejo del dibujo con ratón/táctil
   const mouseDown = function(evt) {
     if (!gameActive) return;
     evt.preventDefault();
@@ -104,11 +118,12 @@ $(document).ready(function() {
     $mainCanvas.off("mousemove touchmove", mouseMoving);
   };
 
-  // Función para vincular los eventos de dibujo
+  // Vincula los eventos de dibujo al canvas
   function bindCanvasEvents() {
     $mainCanvas.on("mousedown touchstart", mouseDown);
     $mainCanvas.on("mouseup touchend", mouseUp);
   }
+
   bindCanvasEvents();
 
   // Botones para limpiar el canvas y cambiar el grosor/color
@@ -131,7 +146,7 @@ $(document).ready(function() {
     currentStrokeStyle = bgColor;
   });
 
-  // Función para asignar una palabra aleatoria a #word y almacenar su categoría
+  // Asigna una palabra aleatoria y almacena su categoría
   function setRandomWord() {
     const categories = Object.keys(words);
     const randomCategory = categories[Math.floor(Math.random() * categories.length)];
@@ -140,7 +155,7 @@ $(document).ready(function() {
     currentCategory = randomCategory;
     currentWord = randomWord.toUpperCase();
     $("#word").text(currentWord);
-    machineGuesses = []; // reiniciamos las respuestas de la máquina
+    machineGuesses = []; // Reiniciamos las respuestas de la máquina
   }
   // Asignamos la palabra aleatoria al inicio
   setRandomWord();
@@ -151,7 +166,7 @@ $(document).ready(function() {
       clearInterval(machineInterval);
       return;
     }
-    // Filtramos las palabras de la categoría que aún no se han adivinado
+    // Filtramos las palabras de la categoría que aún no se han usado
     const availableGuesses = words[currentCategory].filter(word => {
       return !machineGuesses.includes(word.toUpperCase());
     });
@@ -162,15 +177,11 @@ $(document).ready(function() {
     const randomIndex = Math.floor(Math.random() * availableGuesses.length);
     let guess = availableGuesses[randomIndex].toUpperCase();
     machineGuesses.push(guess);
-    // Mostramos la respuesta en el contenedor de respuestas
+    // Mostramos la respuesta en el contenedor de respuestas (chat)
     $(".answerscontainer").append("<p>IA: " + guess + "</p>");
-    // Si la máquina acierta, detenemos el juego, el temporizador y el dibujo
+    // Si la máquina acierta, finaliza la ronda con victoria para la IA
     if (guess === currentWord) {
-      clearInterval(timerInterval);
-      $("#timer").text("IA won");
-      gameActive = false;
-      clearInterval(machineInterval);
-      $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
+      endRound("ia");
     }
   }
 
@@ -186,21 +197,61 @@ $(document).ready(function() {
         $("#timer").text("Time: " + timeLeft);
       } else {
         clearInterval(timerInterval);
-        $("#timer").text("Time's up!");
-        gameActive = false;
-        clearInterval(machineInterval);
-        $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
+        // Si se acaba el tiempo y la máquina no adivinó, gana el jugador
+        if (gameActive) {
+          endRound("player");
+        }
       }
     }, 1000);
+  }
+
+  // Función para finalizar la ronda, actualizar la puntuación, la ronda y limpiar el chat
+  function endRound(winner) {
+    clearInterval(timerInterval);
+    clearInterval(machineInterval);
+    if (winner === "ia") {
+      $("#timer").text("IA won");
+      iaPoints += 5;
+    } else if (winner === "player") {
+      $("#timer").text("Player won");
+      playerPoints += 5;
+    }
+    updateScoreboard();
+    // Limpiamos el chat al final de la ronda
+    $(".answerscontainer").empty();
+    gameActive = false;
+    $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
+    // Si aún quedan rondas, se inicia la siguiente ronda después de 2 segundos
+    if (round < maxRounds) {
+      round++;
+      setTimeout(function() {
+        context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+        timeLeft = 30;
+        $("#timer").text("Time: " + timeLeft);
+        gameActive = true;
+        setRandomWord();
+        bindCanvasEvents();
+        startTimer();
+        startMachineGuess();
+        updateScoreboard(); // Actualiza la ronda y puntuación en el DOM
+      }, 2000);
+    } else {
+      // Fin de la partida
+      $("#timer").text("Game Over!");
+    }
   }
 
   startTimer();
   startMachineGuess();
 
-  // Evento para resetear el juego: reinicia canvas, contador, respuestas y asigna nueva palabra
+  // Evento para resetear el juego: se reinician canvas, contador, puntuación, rondas y chat
   $("#resetgame").on("click", function() {
     context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
     timeLeft = 30;
+    round = 1;
+    playerPoints = 0;
+    iaPoints = 0;
+    updateScoreboard();
     $("#timer").text("Time: " + timeLeft);
     gameActive = true;
     $(".answerscontainer").empty();
