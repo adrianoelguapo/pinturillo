@@ -109,47 +109,15 @@ body{
 .gameheader{
     margin-top: 2.5%;
     width: 100%;
-    display: flex;
-    justify-content: space-around;
-}
-
-.gameheader p{
-    width: 30%;
-    text-align: center;
-}
-
-.gameheader button{
-    width: 30%;
-    color: white;
-    font-family: "Press Start 2P", serif;
-    font-weight: 400;
-    font-style: normal;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 5px;
-}
-
-.gameheader button:hover{
-    box-shadow: 0 0 12.5px #eee;
-}
-
-.gameoptions{
-    width: 87%;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    place-items: center;
 }
 
 .colorscontainer,
 .linescontainer{
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-
-.colorscontainer{
-    width: 20%;
 }
 
 .gamecolors{
@@ -278,7 +246,8 @@ body{
     border-radius: 100%;
 }
 
-#cleanboard{
+#cleanboard,
+#resetgame{
     color: white;
     font-family: "Press Start 2P", serif;
     font-weight: 400;
@@ -290,12 +259,11 @@ body{
     margin-top: 2.5%;
     transition: all 0.3s;
     border-radius: 5px;
-    height: 60%;
-    width: 25%;
 }
 
-#cleanboard:hover{
-    box-shadow: 0 0 12.5px #eee;
+#cleanboard:hover,
+#resetgame:hover{
+    transform: scale(1.1);
 }
 
 canvas{
