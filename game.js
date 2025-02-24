@@ -167,7 +167,7 @@ $(document).ready(function() {
     // Si la máquina acierta, detenemos el juego, el temporizador y el dibujo
     if (guess === currentWord) {
       clearInterval(timerInterval);
-      $("#timer").text("IA guessed it");
+      $("#timer").text("IA won");
       gameActive = false;
       clearInterval(machineInterval);
       $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");

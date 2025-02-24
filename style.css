@@ -65,6 +65,12 @@ body{
     align-items: center;
 }
 
+.scoreboardcontainer{
+    display: flex;
+    align-items: center;
+    height: 65%;
+}
+
 .pointscontainer,
 .chatcontainer{
     width: 22.5%;
@@ -297,5 +303,5 @@ canvas{
     background-color: white;
     border-radius: 5px;
     width: 95%;
-    height: 75%;
+    height: 72.5%;
 }
