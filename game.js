@@ -56,6 +56,9 @@ $(document).ready(function() {
   let gameActive = true;
   let timeLeft = 30;
   let timerInterval;
+  // Variables para controlar si el jugador dibujó en los primeros 10 segundos
+  let playerHasDrawn = false;
+  let drawTimeout;
 
   // Actualiza la visualización de la puntuación y la ronda
   function updateScoreboard() {
@@ -64,6 +67,17 @@ $(document).ready(function() {
     $(".rounds").text("Round: " + round + "/" + maxRounds);
   }
   updateScoreboard();
+
+  // Función para iniciar el "reloj" de detección de dibujo (10 segundos)
+  function startDrawTimeout() {
+    playerHasDrawn = false;
+    drawTimeout = setTimeout(function() {
+      if (!playerHasDrawn && gameActive) {
+        // Si después de 10 segundos el jugador no ha dibujado, la IA gana la ronda
+        endRound("ia");
+      }
+    }, 10000);
+  }
 
   // Devuelve la posición relativa en el canvas
   const getPosicionCanvas = function(evt) {
@@ -99,6 +113,11 @@ $(document).ready(function() {
   const mouseDown = function(evt) {
     if (!gameActive) return;
     evt.preventDefault();
+    // Al detectar el primer trazo, marcamos que el jugador dibujó y cancelamos el timeout
+    if (!playerHasDrawn) {
+      playerHasDrawn = true;
+      clearTimeout(drawTimeout);
+    }
     const pos = getPosicionCanvas(evt);
     initialX = pos.x;
     initialY = pos.y;
@@ -123,7 +142,6 @@ $(document).ready(function() {
     $mainCanvas.on("mousedown touchstart", mouseDown);
     $mainCanvas.on("mouseup touchend", mouseUp);
   }
-
   bindCanvasEvents();
 
   // Botones para limpiar el canvas y cambiar el grosor/color
@@ -205,10 +223,11 @@ $(document).ready(function() {
     }, 1000);
   }
 
-  // Función para finalizar la ronda, actualizar la puntuación, la ronda y limpiar el chat
+  // Función para finalizar la ronda, actualizar puntuación, ronda y limpiar el chat
   function endRound(winner) {
     clearInterval(timerInterval);
     clearInterval(machineInterval);
+    clearTimeout(drawTimeout);
     if (winner === "ia") {
       $("#timer").text("IA won");
       iaPoints += 5;
@@ -217,7 +236,8 @@ $(document).ready(function() {
       playerPoints += 5;
     }
     updateScoreboard();
-    // Limpiamos el chat al final de la ronda
+    
+    // Limpiamos el chat (contenedor de respuestas)
     $(".answerscontainer").empty();
     gameActive = false;
     $mainCanvas.off("mousedown touchstart mouseup touchend mousemove touchmove");
@@ -231,9 +251,11 @@ $(document).ready(function() {
         gameActive = true;
         setRandomWord();
         bindCanvasEvents();
+        updateScoreboard();
         startTimer();
         startMachineGuess();
-        updateScoreboard(); // Actualiza la ronda y puntuación en el DOM
+        // Iniciamos el timeout para detectar dibujo en los primeros 10 segundos
+        startDrawTimeout();
       }, 2000);
     } else {
       // Fin de la partida
@@ -241,8 +263,10 @@ $(document).ready(function() {
     }
   }
 
+  // Iniciamos la ronda: temporizador, máquina y timeout para detectar dibujo
   startTimer();
   startMachineGuess();
+  startDrawTimeout();
 
   // Evento para resetear el juego: se reinician canvas, contador, puntuación, rondas y chat
   $("#resetgame").on("click", function() {
@@ -258,8 +282,11 @@ $(document).ready(function() {
     setRandomWord();
     clearInterval(timerInterval);
     clearInterval(machineInterval);
+    clearTimeout(drawTimeout);
     bindCanvasEvents();
     startTimer();
     startMachineGuess();
+    startDrawTimeout();
   });
+
 });
